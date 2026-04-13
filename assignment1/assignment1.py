@@ -14,21 +14,13 @@ def calc(a, b, operation="multiply"):
             case "subtract": return a - b
             case "multiply": return a * b
             case "divide": return a / b
-            # ... add the rest ...
     except ZeroDivisionError:
         return "You can't divide by 0!"
     except TypeError:
         return "You can't multiply those values!"
-    
-    if __name__ == "__main__":
-    print(f"Task 3 Test (Add): {calc(13, 5, 'add')}")          # Expected: 18
-    print(f"Task 3 Test (Default): {calc(10, 6)}")            # Expected: 60
-    print(f"Task 3 Test (Zero): {calc(10, 0, 'divide')}")     # Expected: You can't divide by 0!
-    print(f"Task 3 Test (Type): {calc('hi', 'bye')}")       # Expected: You can't multiply those values!
 
-    # Task 4 
-    
-    def data_type_conversion(value, type_name):
+# Task 4
+def data_type_conversion(value, type_name):
     try:
         match type_name:
             case "int":
@@ -44,14 +36,6 @@ def calc(a, b, operation="multiply"):
         # We catch both because some 'nonsense' inputs trigger TypeError 
         # while others trigger ValueError.
         return f"You can't convert {value} into a {type_name}."
-    if __name__ == "__main__":
-    # Successful conversions
-    print(data_type_conversion("124", "int"))      # Expected: 124
-    print(data_type_conversion(11.5, "str"))      # Expected: "11.5"
-    
-    # Failing conversion
-    print(data_type_conversion("nonsense", "float")) 
-    # Expected: You can't convert nonsense into a float.
     
 
 # Task 5
@@ -100,6 +84,7 @@ def repeat(string, count):
         
     return result
 
+# Task 6 tests
 if __name__ == "__main__":
     print(f"Repeat 3 times: '{repeat('Chirp', 3)}'")   # Expected: 'ChirpChirpChirp'
     print(f"Repeat 0 times: '{repeat('host', 0)}'")  # Expected: ''
@@ -132,18 +117,8 @@ def student_scores(action, **kwargs):
     
     return "Invalid action"
 
-if __name__ == "__main__":
-    # Test for "best"
-    print(student_scores("best", Joe=85, Faith=92, Charles=78))  
-    # Expected: "Faith"
-
-    # Test for "mean"
-    print(student_scores("mean", Joe=80, Faith=90))              
-    # Expected: 85.0
-
-    #Task 8
-
-    def titleize(title_string):
+# Task 8
+def titleize(title_string):
     # Step 1: Create our list of "little words"
     little_words = ["a", "on", "an", "the", "of", "and", "is", "in"]
     
@@ -174,14 +149,9 @@ if __name__ == "__main__":
                 
     # Step 4: Join the list back into a single string with spaces
     return " ".join(result_words)
-if __name__ == "__main__":
-    print(titleize("the art of war"))           # Expected: "The Art of War"
-    print(titleize("the catcher in the rye"))   # Expected: "The Catcher in the Rye"
-    print(titleize("is this a test"))           # Expected: "Is this a Test"
 
-# Task 10
-
-    def hangman(secret, guess):
+# Task 9 (Hangman)
+def hangman(secret, guess):
     # This is our "bucket" to build the result
     result = ""
     
@@ -196,14 +166,22 @@ if __name__ == "__main__":
             result += "_"
             
     return result
+
 if __name__ == "__main__":
-    # The example from the task
+    # Task 7 tests
+    print(student_scores("best", Joe=85, Faith=92, Charles=78))  
+    # Expected: "Faith"
+    print(student_scores("mean", Joe=80, Faith=90))              
+    # Expected: 85.0
+
+    # Task 8 tests
+    print(titleize("the art of war"))           # Expected: "The Art of War"
+    print(titleize("the catcher in the rye"))   # Expected: "The Catcher in the Rye"
+    print(titleize("is this a test"))           # Expected: "Is this a Test"
+
+    # Task 9 tests
     print(hangman("alphabet", "ab"))      # Expected: "a___ab__"
-    
-    # Testing a full guess
     print(hangman("python", "pythno"))    # Expected: "python"
-    
-    # Testing no matches
     print(hangman("secret", "xyz"))       # Expected: "______"
 
 
