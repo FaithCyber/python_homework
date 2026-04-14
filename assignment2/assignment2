@@ -1,0 +1,212 @@
+import csv
+import traceback
+import os
+from datetime import datetime
+import custom_module
+
+
+# =========================
+# TASK 2: READ EMPLOYEES
+# =========================
+def read_employees():
+    employees_dict = {}
+    rows = []
+
+    try:
+        with open("../csv/employees.csv", "r") as file:
+            csv_reader = csv.reader(file)
+
+            for i, row in enumerate(csv_reader):
+                if i == 0:
+                    employees_dict["fields"] = row
+                else:
+                    rows.append(row)
+
+        employees_dict["rows"] = rows
+        return employees_dict
+
+    except Exception as e:
+        trace_back = traceback.extract_tb(e.__traceback__)
+        stack_trace = []
+
+        for trace in trace_back:
+            stack_trace.append(
+                f"File: {trace[0]}, Line: {trace[1]}, Func: {trace[2]}, Msg: {trace[3]}"
+            )
+
+        print("Exception type:", type(e).__name__)
+        print("Exception message:", str(e))
+        print("Stack trace:", stack_trace)
+        exit()
+
+
+employees = read_employees()
+
+
+# =========================
+# TASK 3: COLUMN INDEX
+# =========================
+def column_index(column_name):
+    return employees["fields"].index(column_name)
+
+
+employee_id_column = column_index("employee_id")
+
+
+# =========================
+# TASK 4: FIRST NAME
+# =========================
+def first_name(row_number):
+    col_index = column_index("first_name")
+    return employees["rows"][row_number][col_index]
+
+
+# =========================
+# TASK 5: FILTER FUNCTION
+# =========================
+def employee_find(employee_id):
+
+    def employee_match(row):
+        return int(row[employee_id_column]) == employee_id
+
+    return list(filter(employee_match, employees["rows"]))
+
+
+# =========================
+# TASK 6: LAMBDA FILTER
+# =========================
+def employee_find_2(employee_id):
+    return list(filter(
+        lambda row: int(row[employee_id_column]) == employee_id,
+        employees["rows"]
+    ))
+
+
+# =========================
+# TASK 7: SORT BY LAST NAME (FIXED)
+# =========================
+def sort_by_last_name():
+    last_name_index = column_index("last_name")
+
+    return sorted(
+        employees["rows"],
+        key=lambda row: row[last_name_index]
+    )
+
+
+# =========================
+# TASK 8: EMPLOYEE DICT
+# =========================
+def employee_dict(row):
+    result = {}
+
+    for i in range(len(employees["fields"])):
+        if employees["fields"][i] != "employee_id":
+            result[employees["fields"][i]] = row[i]
+
+    return result
+
+
+# =========================
+# TASK 9: ALL EMPLOYEES DICT
+# =========================
+def all_employees_dict():
+    result = {}
+
+    for row in employees["rows"]:
+        emp_id = row[employee_id_column]
+        result[emp_id] = employee_dict(row)
+
+    return result
+
+
+# =========================
+# TASK 10: ENV VARIABLE
+# =========================
+def get_this_value():
+    return os.getenv("THISVALUE")
+
+
+# =========================
+# TASK 11: CUSTOM MODULE
+# =========================
+def set_that_secret(new_secret):
+    custom_module.set_secret(new_secret)
+
+
+# =========================
+# TASK 12: READ MINUTES
+# =========================
+def read_file(path):
+    fields = []
+    rows = []
+
+    with open(path, "r") as file:
+        reader = csv.reader(file)
+
+        for i, row in enumerate(reader):
+            if i == 0:
+                fields = row
+            else:
+                rows.append(tuple(row))
+
+    return {"fields": fields, "rows": rows}
+
+
+def read_minutes():
+    return (
+        read_file("../csv/minutes1.csv"),
+        read_file("../csv/minutes2.csv")
+    )
+
+
+minutes1, minutes2 = read_minutes()
+
+
+# =========================
+# TASK 13: SET UNION
+# =========================
+def create_minutes_set():
+    return set(minutes1["rows"]).union(set(minutes2["rows"]))
+
+
+minutes_set = create_minutes_set()
+
+
+# =========================
+# TASK 14: DATETIME CONVERSION
+# =========================
+def create_minutes_list():
+    return list(map(
+        lambda x: (x[0], datetime.strptime(x[1], "%B %d, %Y")),
+        list(minutes_set)
+    ))
+
+
+minutes_list = create_minutes_list()
+
+
+# =========================
+# TASK 15: WRITE SORTED FILE
+# =========================
+def write_sorted_list():
+
+    sorted_list = sorted(minutes_list, key=lambda x: x[1])
+
+    converted = list(map(
+        lambda x: (x[0], x[1].strftime("%B %d, %Y")),
+        sorted_list
+    ))
+
+    with open("./minutes.csv", "w", newline="") as file:
+        writer = csv.writer(file)
+
+        writer.writerow(minutes1["fields"])
+
+        for row in converted:
+            writer.writerow(row)
+
+    return converted
+
+
+final_minutes = write_sorted_list() 
