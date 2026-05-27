@@ -1,0 +1,3 @@
+One challenge I faced was identifying the correct HTML elements and class names in the browser developer tools. I solved this by using the inspect tool and expanding nested div elements carefully.
+
+Another challenge was handling multiple authors for some books. I resolved this by storing the authors in a list and joining them together with semicolons.
