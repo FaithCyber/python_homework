@@ -1,0 +1,12 @@
+function: say_hello
+positional parameters: none
+keyword parameters: none
+return: None
+function: check_args
+positional parameters: [1, 'apple', 3.14]
+keyword parameters: none
+return: True
+function: return_decorator
+positional parameters: none
+keyword parameters: {'user': 'admin', 'status': 'active'}
+return: logger_decorator

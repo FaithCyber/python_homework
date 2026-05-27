@@ -1,5 +1,5 @@
 import logging
-from functools import wraps
+import functools
 
 # One time setup
 logger = logging.getLogger(__name__ + "_parameter_log")
@@ -9,7 +9,7 @@ handler = logging.FileHandler("./decorator.log", "a")
 logger.addHandler(handler)
 
 def logger_decorator(func):
-    @wraps(func)
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         # Format positional parameters
         pos_params = list(args) if args else "none"
