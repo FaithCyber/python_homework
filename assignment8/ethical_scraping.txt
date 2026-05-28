@@ -1,3 +1,14 @@
+Wikipedia robots.txt includes restrictions such as:
+
+Disallow: /wiki/Special:
+Disallow: /wiki/Talk:
+Disallow: /wiki/User:
+Disallow: /w/
+Disallow: /*?action=
+Disallow: /*?search=
+
+These rules block administrative pages, user pages, and query-based URLs to prevent heavy automated scraping and protect server resources.
+
 Restricted Sections:
 Wikipedia restricts crawling for some pages such as login pages, search pages, and administrative paths.
 
@@ -5,4 +16,5 @@ Specific User Agent Rules:
 Yes, some rules apply to specific bots and crawlers.
 
 Purpose of robots.txt:
-The robots.txt file tells web crawlers which parts of a website should or should not be accessed. It helps protect server resources and user privacy while encouraging ethical and respectful web scraping behavior.
+The robots.txt file tells web crawlers which parts of a website should or should not be accessed. 
+It helps protect server resources and user privacy while encouraging ethical and respectful web scraping behavior.

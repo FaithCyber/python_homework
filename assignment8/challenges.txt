@@ -1,3 +1,13 @@
-#One challenge I faced was identifying the correct HTML elements and class names in the browser developer tools. I solved this by using the inspect tool and expanding nested div elements carefully.
+#One challenge I faced was identifying the correct HTML elements and class names in the browser developer tools. 
+
+I solved this by using the inspect tool and expanding nested div elements carefully.
 
 Another challenge was handling multiple authors for some books. I resolved this by storing the authors in a list and joining them together with semicolons.
+
+
+
+#Another challenge I faced was scraping the OWASP Top 10 page. It took some experimentation to correctly target only the Top 10 list using XPath. 
+
+At first, my selector returned extra navigation links, so I adjusted it to focus on the main ordered list.
+
+I also had to ensure the page fully loaded before extracting data, which required adding a delay using time.sleep() so Selenium could properly capture all elements.
