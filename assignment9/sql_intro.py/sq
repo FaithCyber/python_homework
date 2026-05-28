@@ -1,0 +1,148 @@
+import sqlite3
+
+# ----------------------------
+# CONNECT TO DATABASE
+# ----------------------------
+try:
+    conn = sqlite3.connect("../db/magazines.db")
+    cursor = conn.cursor()
+    print("Database connected successfully")
+
+    # Enable foreign keys
+    conn.execute("PRAGMA foreign_keys = 1")
+
+    # ----------------------------
+    # CREATE TABLES
+    # ----------------------------
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS publishers (
+        publisher_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE NOT NULL
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS magazines (
+        magazine_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE NOT NULL,
+        publisher_id INTEGER,
+        FOREIGN KEY (publisher_id) REFERENCES publishers(publisher_id)
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS subscribers (
+        subscriber_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        address TEXT NOT NULL
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS subscriptions (
+        subscription_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subscriber_id INTEGER,
+        magazine_id INTEGER,
+        expiration_date TEXT NOT NULL,
+        FOREIGN KEY (subscriber_id) REFERENCES subscribers(subscriber_id),
+        FOREIGN KEY (magazine_id) REFERENCES magazines(magazine_id)
+    )
+    """)
+
+    conn.commit()
+    print("Tables created successfully")
+
+    # ----------------------------
+    # SAMPLE FUNCTIONS (STEP 3 IDEA)
+    # ----------------------------
+
+    def add_publisher(name):
+        try:
+            cursor.execute("INSERT OR IGNORE INTO publishers (name) VALUES (?)", (name,))
+            conn.commit()
+        except Exception as e:
+            print("Publisher error:", e)
+
+    def add_magazine(name, publisher_id):
+        try:
+            cursor.execute(
+                "INSERT OR IGNORE INTO magazines (name, publisher_id) VALUES (?, ?)",
+                (name, publisher_id)
+            )
+            conn.commit()
+        except Exception as e:
+            print("Magazine error:", e)
+
+    def add_subscriber(name, address):
+        try:
+            cursor.execute("""
+                SELECT * FROM subscribers WHERE name=? AND address=?
+            """, (name, address))
+
+            if cursor.fetchone() is None:
+                cursor.execute("""
+                    INSERT INTO subscribers (name, address) VALUES (?, ?)
+                """, (name, address))
+                conn.commit()
+        except Exception as e:
+            print("Subscriber error:", e)
+
+    def add_subscription(subscriber_id, magazine_id, expiration_date):
+        try:
+            cursor.execute("""
+                INSERT INTO subscriptions (subscriber_id, magazine_id, expiration_date)
+                VALUES (?, ?, ?)
+            """, (subscriber_id, magazine_id, expiration_date))
+            conn.commit()
+        except Exception as e:
+            print("Subscription error:", e)
+
+    # ----------------------------
+    # INSERT SAMPLE DATA
+    # ----------------------------
+
+    add_publisher("Tech Media")
+    add_publisher("Health Weekly")
+    add_publisher("Sports World")
+
+    add_magazine("AI Today", 1)
+    add_magazine("Healthy Living", 2)
+    add_magazine("Football Focus", 3)
+
+    add_subscriber("John Doe", "123 Main St")
+    add_subscriber("Jane Smith", "456 Oak Ave")
+    add_subscriber("Mike Brown", "789 Pine Rd")
+
+    add_subscription(1, 1, "2026-12-31")
+    add_subscription(2, 2, "2026-11-30")
+    add_subscription(3, 3, "2026-10-15")
+
+    # ----------------------------
+    # SQL QUERIES (STEP 4)
+    # ----------------------------
+
+    print("\n--- Subscribers ---")
+    cursor.execute("SELECT * FROM subscribers")
+    for row in cursor.fetchall():
+        print(row)
+
+    print("\n--- Magazines Sorted ---")
+    cursor.execute("SELECT * FROM magazines ORDER BY name")
+    for row in cursor.fetchall():
+        print(row)
+
+    print("\n--- Magazines by Publisher ---")
+    cursor.execute("""
+        SELECT magazines.name, publishers.name
+        FROM magazines
+        JOIN publishers ON magazines.publisher_id = publishers.publisher_id
+    """)
+    for row in cursor.fetchall():
+        print(row)
+
+except Exception as e:
+    print("Error:", e)
+
+finally:
+    conn.close()
+    print("\nConnection closed")
