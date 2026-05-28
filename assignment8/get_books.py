@@ -1,3 +1,8 @@
+#task1 robots.txt compliance
+# Reviewed robots.txt compliance for Durham County
+# and confirmed this scraping activity
+# complies with the website's access policies.
+
 
 # Task 3: Import libraries
 
@@ -13,7 +18,7 @@ import time
 # Task 3: Load page
 
 
-url = "https://durhamcounty.bibliocommons.com/v2/search?query=learning%20spanish&searchType=smart"
+url = "https://durhamcounty.bibliocommons.com/v2/search?query=learning%20spanish&searchType=smart]"
 
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
