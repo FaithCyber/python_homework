@@ -6,10 +6,10 @@ import pandas as pd
 # =========================
 
 try:
-    # Connect to lesson database
+    # Connect to lesson database (ONE folder up)
     conn = sqlite3.connect("../db/lesson.db")
 
-    # Load data using SQL JOIN
+    # JOIN query
     query = """
     SELECT
         line_items.line_item_id,
@@ -22,6 +22,7 @@ try:
     ON line_items.product_id = products.product_id
     """
 
+    # Load into DataFrame
     df = pd.read_sql_query(query, conn)
 
     # Print first 5 rows
@@ -50,13 +51,10 @@ try:
     print("\n--- Sorted DataFrame ---")
     print(grouped.head())
 
-    # Save to CSV
+    # Save CSV in assignment9 folder
     grouped.to_csv("order_summary.csv", index=False)
 
-    print("\nFile 'order_summary.csv' created successfully.")
-
-except sqlite3.Error as e:
-    print("Database error:", e)
+    print("\norder_summary.csv created successfully!")
 
 except Exception as e:
     print("Error:", e)

@@ -1,16 +1,21 @@
 import sqlite3
 
-
-# Task 1: Create a New SQLite Database
-
+# =========================
+# Task 1 & 2 & 3 & 4
+# =========================
 
 try:
+    # Task 1: Connect DB
     conn = sqlite3.connect("../db/magazines.db")
     cursor = conn.cursor()
 
-    # Task 2: Define Database Structure
+    # Task 2: Enable foreign keys
+    conn.execute("PRAGMA foreign_keys = 1")
 
-    # Generate publishers table
+    # -------------------------
+    # Create Tables
+    # -------------------------
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS publishers (
         publisher_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,7 +23,6 @@ try:
     )
     """)
 
-    # Generate magazines table
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS magazines (
         magazine_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,7 +33,6 @@ try:
     )
     """)
 
-    # Generate subscribers table
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS subscribers (
         subscriber_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,7 +41,6 @@ try:
     )
     """)
 
-    # Generate subscriptions table
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS subscriptions (
         subscription_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,137 +54,101 @@ try:
     )
     """)
 
-      
-    # Task 3: Populate Tables with Data
+    # -------------------------
+    # Task 3: Insert Functions
+    # -------------------------
 
     def add_publisher(name):
-        try:
-            cursor.execute(
-                "SELECT * FROM publishers WHERE name = ?",
-                (name,)
-            )
-
-            if cursor.fetchone() is None:
-                cursor.execute(
-                    "INSERT INTO publishers (name) VALUES (?)",
-                    (name,)
-                )
-
-        except sqlite3.Error as e:
-            print("Publisher error:", e)
-
+        cursor.execute("SELECT * FROM publishers WHERE name = ?", (name,))
+        if cursor.fetchone() is None:
+            cursor.execute("INSERT INTO publishers (name) VALUES (?)", (name,))
 
     def add_magazine(name, publisher_id):
-        try:
+        cursor.execute("SELECT * FROM magazines WHERE name = ?", (name,))
+        if cursor.fetchone() is None:
             cursor.execute(
-                "SELECT * FROM magazines WHERE name = ?",
-                (name,)
+                "INSERT INTO magazines (name, publisher_id) VALUES (?, ?)",
+                (name, publisher_id)
             )
 
-            if cursor.fetchone() is None:
-                cursor.execute(
-                    "INSERT INTO magazines (name, publisher_id) VALUES (?, ?)",
-                    (name, publisher_id)
-                )
-
-        except sqlite3.Error as e:
-            print("Magazine error:", e)
-
-
     def add_subscriber(name, address):
-        try:
+        cursor.execute(
+            "SELECT * FROM subscribers WHERE name = ? AND address = ?",
+            (name, address)
+        )
+        if cursor.fetchone() is None:
             cursor.execute(
-                "SELECT * FROM subscribers WHERE name = ? AND address = ?",
+                "INSERT INTO subscribers (name, address) VALUES (?, ?)",
                 (name, address)
             )
 
-            if cursor.fetchone() is None:
-                cursor.execute(
-                    "INSERT INTO subscribers (name, address) VALUES (?, ?)",
-                    (name, address)
-                )
-
-        except sqlite3.Error as e:
-            print("Subscriber error:", e)
-
-
     def add_subscription(subscriber_id, magazine_id, expiration_date):
-        try:
+        cursor.execute("""
+            SELECT * FROM subscriptions
+            WHERE subscriber_id = ?
+            AND magazine_id = ?
+            AND expiration_date = ?
+        """, (subscriber_id, magazine_id, expiration_date))
+
+        if cursor.fetchone() is None:
             cursor.execute("""
-                SELECT * FROM subscriptions
-                WHERE subscriber_id = ?
-                AND magazine_id = ?
-                AND expiration_date = ?
+                INSERT INTO subscriptions
+                (subscriber_id, magazine_id, expiration_date)
+                VALUES (?, ?, ?)
             """, (subscriber_id, magazine_id, expiration_date))
 
-            if cursor.fetchone() is None:
-                cursor.execute("""
-                    INSERT INTO subscriptions
-                    (subscriber_id, magazine_id, expiration_date)
-                    VALUES (?, ?, ?)
-                """, (subscriber_id, magazine_id, expiration_date))
+    # -------------------------
+    # Insert Data
+    # -------------------------
 
-        except sqlite3.Error as e:
-            print("Subscription error:", e)
-
-    # Add publishers
     add_publisher("Time Inc")
     add_publisher("National Geographic")
     add_publisher("Conde Nast")
 
-    # Add magazines
     add_magazine("Time", 1)
     add_magazine("National Geographic Magazine", 2)
     add_magazine("Vogue", 3)
 
-    # Add subscribers
     add_subscriber("John Smith", "123 Main St")
     add_subscriber("Mary Jones", "456 Oak Ave")
     add_subscriber("David Brown", "789 Pine Rd")
 
-    # Add subscriptions
     add_subscription(1, 1, "2027-01-01")
     add_subscription(2, 2, "2027-02-01")
     add_subscription(3, 3, "2027-03-01")
 
-# Task 4: Write SQL Queries
+    # =========================
+    # Task 4: Queries
+    # =========================
 
-
-print("\n--- All Subscribers ---")
-try:
+    print("\n--- All Subscribers ---")
     cursor.execute("SELECT * FROM subscribers")
-    subscribers = cursor.fetchall()
-    for row in subscribers:
+    for row in cursor.fetchall():
         print(row)
-except sqlite3.Error as e:
-    print("Query error (subscribers):", e)
 
-
-print("\n--- All Magazines (Sorted by Name) ---")
-try:
-    cursor.execute("SELECT * FROM magazines ORDER BY name ASC")
-    magazines = cursor.fetchall()
-    for row in magazines:
+    print("\n--- Magazines Sorted ---")
+    cursor.execute("SELECT * FROM magazines ORDER BY name")
+    for row in cursor.fetchall():
         print(row)
-except sqlite3.Error as e:
-    print("Query error (magazines):", e)
 
-
-print("\n--- Magazines for a Specific Publisher (JOIN) ---")
-try:
-    publisher_name = "Time Inc"   # change if you want a different one
-
+    print("\n--- Magazines by Publisher (JOIN) ---")
     cursor.execute("""
-        SELECT magazines.magazine_id, magazines.name, publishers.name
+        SELECT magazines.name, publishers.name
         FROM magazines
         JOIN publishers
         ON magazines.publisher_id = publishers.publisher_id
-        WHERE publishers.name = ?
-    """, (publisher_name,))
-
-    results = cursor.fetchall()
-    for row in results:
+        WHERE publishers.name = 'Time Inc'
+    """)
+    for row in cursor.fetchall():
         print(row)
 
+    conn.commit()
+    print("\nDatabase updated successfully.")
+
 except sqlite3.Error as e:
-    print("Query error (join):", e)
+    print("Database error:", e)
+
+finally:
+    if 'conn' in locals():
+        conn.close()
+        print("Connection closed.")
