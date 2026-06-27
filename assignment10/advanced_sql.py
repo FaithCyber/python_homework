@@ -13,7 +13,7 @@ def main():
     conn.execute("PRAGMA foreign_keys = 1")
     
     # Task 1: Complex JOINs with Aggregation
-    
+
     print("--- Task 1: Total Price of Each of the First 5 Orders ---")
     
     task1_query = """
@@ -109,7 +109,7 @@ def main():
             FROM line_items li
             JOIN products p ON li.product_id = p.product_id
             WHERE li.order_id = ?;
-        """
+        
         cursor.execute(verify_query, (new_order_id,))
         verify_results = cursor.fetchall()
         
@@ -133,7 +133,7 @@ def main():
         JOIN orders o ON e.employee_id = o.employee_id
         GROUP BY e.employee_id
         HAVING COUNT(o.order_id) > 5;
-    """
+   
     
     cursor.execute(task4_query)
     task4_results = cursor.fetchall()
