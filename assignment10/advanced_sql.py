@@ -12,9 +12,8 @@ def main():
     # Enforce foreign key constraints
     conn.execute("PRAGMA foreign_keys = 1")
     
-    # ==========================================
     # Task 1: Complex JOINs with Aggregation
-    # ==========================================
+    
     print("--- Task 1: Total Price of Each of the First 5 Orders ---")
     
     task1_query = """
@@ -34,9 +33,8 @@ def main():
         print(f"Order ID: {row[0]} | Total Price: ${row[1]:.2f}")
     print("\n")
 
-    # ==========================================
     # Task 2: Understanding Subqueries
-    # ==========================================
+   
     print("--- Task 2: Average Order Price per Customer ---")
     
     task2_query = """
@@ -60,9 +58,8 @@ def main():
         print(f"Customer: {row[0]} | Avg Order Price: {avg_price}")
     print("\n")
 
-    # ==========================================
     # Task 3: An Insert Transaction Based on Data
-    # ==========================================
+   
     print("--- Task 3: Insert Transaction & Verification ---")
     
     try:
@@ -106,6 +103,7 @@ def main():
         print(f"Successfully created Order ID {new_order_id} for Perez and Sons.")
         
         # 6. Verification SELECT query
+
         verify_query = """
             SELECT li.line_item_id, li.quantity, p.product_name
             FROM line_items li
@@ -125,9 +123,8 @@ def main():
         
     print("\n")
 
-    # ==========================================
     # Task 4: Aggregation with HAVING
-    # ==========================================
+
     print("--- Task 4: Employees with More Than 5 Orders ---")
     
     task4_query = """
